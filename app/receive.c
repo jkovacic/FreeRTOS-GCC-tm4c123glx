@@ -215,8 +215,8 @@ void recvTask(void* params)
                 /* Uppercase letters 'A' .. 'Z': */
                 case 'A' ... 'Z' :
 
-				/* Lowercase letters 'a'..'z': */
-				case 'a' ... 'z' :
+                /* Lowercase letters 'a'..'z': */
+                case 'a' ... 'z' :
 
                 /* Decimal digits '0'..'9': */
                 case '0' ... '9' :
