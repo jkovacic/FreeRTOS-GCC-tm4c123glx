@@ -20,6 +20,10 @@ limitations under the License.
  * A simple demo FreeRTOS application that receives characters via
  * UART 1 and prints the inverted text when 'Enter' is pressed.
  *
+ * In parallel to this, a simple light show runs that periodically
+ * turns on and off various combinations of built-in LEDS. The
+ * light show may be paused or resumed by pressing the switch 1.
+ *
  * Additionally it runs a few other tasks that regularly display
  * the system's uptime and reload the selcted watchdog to prevent
  * resets.
@@ -40,6 +44,7 @@ limitations under the License.
 #include "wdtask.h"
 #include "print.h"
 #include "receive.h"
+#include "lightshow.h"
 
 #include "uart.h"
 #include "gpio.h"
@@ -81,6 +86,12 @@ static recvUartParam recvParam;
 static timerParam_t timerParam =
     (timerParam_t) { .delay = 1 };
 
+/* Parameter for the switch 1 handling task */
+static Switch1TaskParam_t sw1Param;
+
+/* Parameter for the light show task */
+static LightShowParam_t lsParam =
+    (LightShowParam_t) { .delayMs = 1000 };
 
 /* Fixed frequency periodic task function that displays system's uptime */
 void vPeriodicTimerFunction(void* pvParameters)
@@ -343,6 +354,12 @@ int main(void)
         FreeRTOS_Error("Initialization of watchdog reloading failed\r\n");
     }
 
+    /* Initialize LEDs and switch 1 */
+    if ( pdFAIL == lightshowInit() )
+    {
+        FreeRTOS_Error("Initialization of LEDs and/or switch 1 failed\r\n");
+    }
+
     /*
      * Create a task that periodically reloads a watchdog
      * and thus prevents resetting the board.
@@ -358,6 +375,19 @@ int main(void)
          (void*) &printDebugParam, APP_PRIOR_PRINT_GATEKEEPER, NULL) )
     {
         FreeRTOS_Error("Could not create a print gate keeper task\r\n");
+    }
+
+    /* Create tasks that handles handles LEDs and the switch 1: */
+    if ( pdPASS != xTaskCreate(lightshowTask, "lightshow", 128,
+         (void*) &lsParam, APP_PRIOR_LIGHTSHOW, &(sw1Param.ledHandle)) )
+    {
+        FreeRTOS_Error("Could not create a light show task\r\n");
+    }
+
+    if ( pdPASS != xTaskCreate(sw1Task, "switch 1", 128,
+         (void*) &sw1Param, APP_PRIOR_SW1_HANDLER, NULL ))
+    {
+        FreeRTOS_Error("Could not create a switch 1 handling task\r\n");
     }
 
     /* Create a command processor task: */

@@ -222,8 +222,11 @@
 #define APP_PRIOR_FIX_FREQ_PERIODIC       ( 3 )
 #define APP_PRIOR_PRINT_GATEKEEPER        ( 1 )
 #define APP_PRIOR_RECEIVER                ( 1 )
-#define APP_PRIOR_WATCHDOG_RELOADING      ( 4 )
+#define APP_PRIOR_WATCHDOG_RELOADING      ( 2 )
 #define APP_PROIR_COMMAND_PROCESSOR       ( 2 )
+#define APP_PRIOR_SW1_REENABLE_INTR       ( 4 )
+#define APP_PRIOR_LIGHTSHOW               ( 3 )
+#define APP_PRIOR_SW1_HANDLER             ( 1 )
 
 /* Size of the queue with pointers to strings that will be printed */
 #define APP_PRINT_QUEUE_SIZE              ( 10 )

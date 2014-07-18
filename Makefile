@@ -89,13 +89,14 @@ DRIVERS_OBJS += fpu.o
 DRIVERS_OBJS += gpio.o
 DRIVERS_OBJS += uart.o
 DRIVERS_OBJS += watchdog.o
-#DRIVERS_OBJS += led.o
-#DRIVERS_OBJS += switch.o
+DRIVERS_OBJS += led.o
+DRIVERS_OBJS += switch.o
 
 APP_OBJS = startup.o handlers.o init.o main.o
 APP_OBJS += wdtask.o
 APP_OBJS += print.o
 APP_OBJS += receive.o
+APP_OBJS += lightshow.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 
@@ -249,6 +250,9 @@ $(OBJDIR)print.o : $(APP_SRC)print.c $(DEP_SETTINGS)
 	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
 
 $(OBJDIR)receive.o : $(APP_SRC)receive.c $(DEP_SETTINGS)
+	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+
+$(OBJDIR)lightshow.o : $(APP_SRC)lightshow.c $(DEP_SETTINGS)
 	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
 
 $(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c

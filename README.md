@@ -70,8 +70,9 @@ The second serial connection receives characters you send using a keyboard but
 does not display anything until _Enter_ is pressed. When this happens, it 
 will invert your text and print it.
 
-In future, the application will be expanded to use built-in switches and
-RGB LED diodes.
+In parallel to this, a simple light show runs. It periodically turns on and off
+various combinations of built-in LEDs. The light show may be paused/resumed by
+pressing the built-in switch 1.
 
 ##License
 All source and header files in FreeRTOS/ and its subdirectiories are licensed under
