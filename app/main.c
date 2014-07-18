@@ -384,8 +384,8 @@ int main(void)
         FreeRTOS_Error("Could not create a light show task\r\n");
     }
 
-    if ( pdPASS != xTaskCreate(sw1Task, "switch 1", 128,
-         (void*) &sw1Param, APP_PRIOR_SW1_HANDLER, NULL ))
+    if ( pdPASS != xTaskCreate(sw1DsrTask, "switch 1", 128,
+         (void*) &sw1Param, APP_PRIOR_SW1_DSR, NULL ))
     {
         FreeRTOS_Error("Could not create a switch 1 handling task\r\n");
     }
@@ -406,6 +406,7 @@ int main(void)
 
     vDirectPrintMsg("Enter a text via UART 1.\r\n");
     vDirectPrintMsg("It will be displayed inverted when 'Enter' is pressed.\r\n\r\n");
+    vDirectPrintMsg("Press switch 1 to pause/resume light show.");
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();

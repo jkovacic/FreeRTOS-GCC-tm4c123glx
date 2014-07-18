@@ -55,6 +55,6 @@ int16_t lightshowInit(void);
 
 void lightshowTask(void* params);
 
-void sw1Task(void* params);
+void sw1DsrTask(void* params);
 
 #endif  /* _LIGHTSHOW_H_ */

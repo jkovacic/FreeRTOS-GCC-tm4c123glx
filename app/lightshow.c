@@ -63,7 +63,7 @@ static const uint8_t __states[ LED_STATES ] =
 
 /*
  * A semaphore for signalization between switch 1's
- * ISR and its deferred interrupt processing task.
+ * ISR and its deferred service routine task.
  */
 static SemaphoreHandle_t sw1Smphr = NULL;
 
@@ -84,13 +84,13 @@ static void __sw1IntHandler(void)
     pxHigherPriorityTaskWoken = pdFALSE;
     /* Due to possible bouncing disable switch 1's interrupt first...*/
     switch_disableSwInt(1);
-    /* ... and signal the deferred interrupt processing task */
+    /* ... and signal the deferred service routine task */
     xSemaphoreGiveFromISR(sw1Smphr, &pxHigherPriorityTaskWoken);
 
     /*
      * 'pxHigherPriorityTaskWoken' is not checked
      *  as there is no need for an early context switch
-     *  if the DIP task is about to be activated.
+     *  if the DSR task is about to be activated.
      */
 }
 
@@ -117,7 +117,7 @@ static void __enableSw1IntrTask(void* params)
     for ( ; ; )
     {
         /*
-         * The deferred interrupt processing task will
+         * The deferred service routine task will
          * resume this task and this point will be reached.
          *
          * First delay for the bouncing period,
@@ -149,7 +149,7 @@ int16_t lightshowInit(void)
 {
 	/*
 	 * Create a semaphore for signalization between
-	 * switch 1 ISR and DIP. Also check success
+	 * switch 1 ISR and DSR. Also check success
 	 * of the creation.
 	 */
     sw1Smphr = xSemaphoreCreateBinary();
@@ -183,8 +183,7 @@ int16_t lightshowInit(void)
 
 
 /**
- * A task that periodically turns on and off
- * built in LEDs.
+ * A task that periodically turns on and off built in LEDs.
  *
  * @param params - (void*) casted pointer to an instance of LightShowParam_t
  *                 with the period of LED switching (1000 ms if params is NULL)
@@ -219,14 +218,14 @@ void lightshowTask(void* params)
 
 
 /**
- * A deferred interrupt processing task that receives a
+ * A deferred service routine task that receives a
  * signal from switch 1 ISR and pauses/resumes the light show.
  *
  * The task is deleted immediately if 'params' equals NULL.
  *
  * @param params - (void*) casted pointer to an instance of Switch1TaskParam_t with the light show task handle
  */
-void sw1Task(void* params)
+void sw1DsrTask(void* params)
 {
     TaskHandle_t lsTask = NULL;
 	bool lsRunning = true;
