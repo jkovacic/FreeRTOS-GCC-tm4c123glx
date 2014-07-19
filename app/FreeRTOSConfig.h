@@ -260,5 +260,10 @@
  */
 #define APP_TIMER_DELAY_SEC               ( 10 )
 
+/*
+ * Period (in milliseconds) of LED switching by
+ * the light show task.
+ */
+#define APP_LIGHTSHOW_PERIOD_MS           ( 1000 )
 
 #endif /* FREERTOS_CONFIG_H */

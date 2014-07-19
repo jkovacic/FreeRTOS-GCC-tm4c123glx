@@ -91,7 +91,7 @@ static Switch1TaskParam_t sw1Param;
 
 /* Parameter for the light show task */
 static LightShowParam_t lsParam =
-    (LightShowParam_t) { .delayMs = 1000 };
+    (LightShowParam_t) { .delayMs = APP_TIMER_DELAY_SEC };
 
 /* Fixed frequency periodic task function that displays system's uptime */
 void vPeriodicTimerFunction(void* pvParameters)
