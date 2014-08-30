@@ -111,6 +111,8 @@
 #define configUSE_APPLICATION_TASK_TAG    1
 #define configCHECK_FOR_STACK_OVERFLOW    0
 
+#define configUSE_PORT_OPTIMISED_TASK_SELECTION    0
+
 
 #define configUSE_MUTEXES                 0
 

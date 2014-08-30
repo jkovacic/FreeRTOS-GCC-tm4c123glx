@@ -43,4 +43,6 @@ void scb_pendSysTickIntr(void);
 
 void scb_unpendSysTickIntr(void);
 
+uint8_t scb_activeException(void);
+
 #endif  /* _SCB_H_ */

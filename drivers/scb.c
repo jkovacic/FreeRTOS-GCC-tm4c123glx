@@ -107,6 +107,9 @@ static volatile TM4C123G_SCB_REGS* const pReg =
 /* Bit mask for SYSRESREQ flag */
 #define APINT_SYSRESREQ                 ( 0x00000004 )
 
+/* Bit mask for */
+#define INTCTRL_VECACT_MASK             ( 0x000000FF )
+
 /* Flags for setting and clearing PendSV pending */
 #define INTCTRL_PENDSV_FLAG             ( 0x10000000 )
 #define INTCTRL_UNPENDSV_FLAG           ( 0x08000000 )
@@ -120,6 +123,7 @@ static volatile TM4C123G_SCB_REGS* const pReg =
  * Sets priority of SysTick generated interrupt requests
  *
  * Nothing is done if 'pri' is greater than 7.
+ *
  * @param pri - priority of SysTick generated interrupts (between 0 and 7)
  */
 void scb_setSysTickPriority(uint8_t pri)
@@ -139,6 +143,7 @@ void scb_setSysTickPriority(uint8_t pri)
  * Sets priority of PendSV interrupt requests.
  *
  * Nothing is done if 'pri' is greater than 7.
+ *
  * @param pri - priority of PendSV interrupts (between 0 and 7)
  */
 void scb_setPendSvPriority(uint8_t pri)
@@ -247,4 +252,14 @@ void scb_unpendSysTickIntr(void)
      */
 
     HWREG_SET_BITS( pReg->SCB_INTCTRL, INTCTRL_PENDSTCLR_FLAG );
+}
+
+
+/**
+ *
+ * @return active exception number (if in Handler mode) or 0 (if in Thread mode)
+ */
+uint8_t scb_activeException(void)
+{
+    return (uint8_t) HWREG_READ_BITS( pReg->SCB_INTCTRL, INTCTRL_VECACT_MASK );
 }

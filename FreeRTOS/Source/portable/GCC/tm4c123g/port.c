@@ -16,7 +16,7 @@
  */
 
 /*
-    FreeRTOS V8.0.1 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.1.0 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -279,10 +279,11 @@ static void prvPortStartFirstTask( void )
         " LDR     r0, [r0]             \n"
         " LDR     r0, [r0]             \n"
         " MSR     msp, r0              \n" /* Set the msp back to the start of the stack. */
-        " CPSIE i                      \n" /* Globally enable interrupts. */
+        " CPSIE   i                    \n" /* Globally enable interrupts. */
+        " CPSIE   f                    \n" /* Globally enable fault handlers */
         " DSB                          \n"
         " ISB                          \n"
-        " SVC 0                        \n" /* System call to start first task. */
+        " SVC     0                    \n" /* System call to start first task. */
         " NOP                          \n"
     );
 }
@@ -415,6 +416,18 @@ void vPortEnterCritical( void )
     uxCriticalNesting++;
     __asm volatile( "DSB" );
     __asm volatile( "ISB" );
+
+    /*
+     * This is not the interrupt safe version of the enter critical function so
+     * assert() if it is being called from an interrupt context.  Only API
+     * functions that end in "FromISR" can be used in an interrupt.  Only assert if
+     * the critical nesting count is 1 to protect against recursive calls if the
+     * assert function also uses a critical section.
+     */
+    if( uxCriticalNesting == 1 )
+    {
+         configASSERT( ( scb_activeException() ) == 0 );
+    }
 }
 /*-----------------------------------------------------------*/
 
