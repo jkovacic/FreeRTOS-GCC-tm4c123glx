@@ -156,7 +156,7 @@ void _recv_intHandler(uint8_t uart)
  */
 void recvTask(void* params)
 {
-	const recvUartParam* const par = (recvUartParam*) params;
+    const recvUartParam* const par = (recvUartParam*) params;
     const uint8_t recvUartNr =
         ( NULL != par ? par->uartNr : UART_UNSPECIFIED );
 

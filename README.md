@@ -21,7 +21,7 @@ based on GCC. See comments in _setenv.sh_ for more details about download and in
 * _[LM4Tools](https://github.com/utzig/lm4tools)_ or 
 _[TI LMFlash Programmer](http://www.ti.com/tool/lmflashprogrammer)_ 
 to upload images to the Launchpad
-* Optionally _[OpenOCD](http://openocd.sourceforge.net/)_ for deugging.
+* Optionally _[OpenOCD](http://openocd.sourceforge.net/)_ for debugging.
 See comments in _start\_openocd.sh_ for more details about installation.
 * Optionally a _FTDI or PL2303HX cable supporting +3.3V based TTL level UART signals_
 

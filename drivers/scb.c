@@ -107,7 +107,7 @@ static volatile TM4C123G_SCB_REGS* const pReg =
 /* Bit mask for SYSRESREQ flag */
 #define APINT_SYSRESREQ                 ( 0x00000004 )
 
-/* Bit mask for */
+/* Bit mask for VECACT status bits of the INTCTRL register: */
 #define INTCTRL_VECACT_MASK             ( 0x000000FF )
 
 /* Flags for setting and clearing PendSV pending */
@@ -256,7 +256,6 @@ void scb_unpendSysTickIntr(void)
 
 
 /**
- *
  * @return active exception number (if in Handler mode) or 0 (if in Thread mode)
  */
 uint8_t scb_activeException(void)
