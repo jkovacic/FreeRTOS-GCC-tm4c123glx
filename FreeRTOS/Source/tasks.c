@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.1.0 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.1.1 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -328,12 +328,12 @@ PRIVILEGED_DATA static volatile UBaseType_t uxSchedulerSuspended	= ( UBaseType_t
 	/* A port optimised version is provided, call it only if the TCB being reset
 	is being referenced from a ready list.  If it is referenced from a delayed
 	or suspended list then it won't be in a ready list. */
-	#define taskRESET_READY_PRIORITY( uxPriority )													\
-	{																								\
-		if( listCURRENT_LIST_LENGTH( &( pxReadyTasksLists[ ( uxPriority ) ] ) ) == 0 )				\
-		{																							\
-			portRESET_READY_PRIORITY( ( uxPriority ), ( uxTopReadyPriority ) );						\
-		}																							\
+	#define taskRESET_READY_PRIORITY( uxPriority )														\
+	{																									\
+		if( listCURRENT_LIST_LENGTH( &( pxReadyTasksLists[ ( uxPriority ) ] ) ) == ( UBaseType_t ) 0 )	\
+		{																								\
+			portRESET_READY_PRIORITY( ( uxPriority ), ( uxTopReadyPriority ) );							\
+		}																								\
 	}
 
 #endif /* configUSE_PORT_OPTIMISED_TASK_SELECTION */
@@ -553,14 +553,14 @@ TCB_t * pxNewTCB;
 			pxTopOfStack = ( StackType_t * ) ( ( ( portPOINTER_SIZE_TYPE ) pxTopOfStack ) & ( ( portPOINTER_SIZE_TYPE ) ~portBYTE_ALIGNMENT_MASK  ) ); /*lint !e923 MISRA exception.  Avoiding casts between pointers and integers is not practical.  Size differences accounted for using portPOINTER_SIZE_TYPE type. */
 
 			/* Check the alignment of the calculated top of stack is correct. */
-			configASSERT( ( ( ( uint32_t ) pxTopOfStack & ( uint32_t ) portBYTE_ALIGNMENT_MASK ) == 0UL ) );
+			configASSERT( ( ( ( portPOINTER_SIZE_TYPE ) pxTopOfStack & ( portPOINTER_SIZE_TYPE ) portBYTE_ALIGNMENT_MASK ) == 0UL ) );
 		}
 		#else /* portSTACK_GROWTH */
 		{
 			pxTopOfStack = pxNewTCB->pxStack;
 
 			/* Check the alignment of the stack buffer is correct. */
-			configASSERT( ( ( ( uint32_t ) pxNewTCB->pxStack & ( uint32_t ) portBYTE_ALIGNMENT_MASK ) == 0UL ) );
+			configASSERT( ( ( ( portPOINTER_SIZE_TYPE ) pxNewTCB->pxStack & ( portPOINTER_SIZE_TYPE ) portBYTE_ALIGNMENT_MASK ) == 0UL ) );
 
 			/* If we want to use stack checking on architectures that use
 			a positive stack growth direction then we also need to store the
@@ -3039,13 +3039,13 @@ TCB_t *pxNewTCB;
 	{
 	uint32_t ulCount = 0U;
 
-		while( *pucStackByte == tskSTACK_FILL_BYTE )
+		while( *pucStackByte == ( uint8_t ) tskSTACK_FILL_BYTE )
 		{
 			pucStackByte -= portSTACK_GROWTH;
 			ulCount++;
 		}
 
-		ulCount /= ( uint32_t ) sizeof( StackType_t );
+		ulCount /= ( uint32_t ) sizeof( StackType_t ); /*lint !e961 Casting is not redundant on smaller architectures. */
 
 		return ( uint16_t ) ulCount;
 	}
@@ -3246,10 +3246,13 @@ TCB_t *pxTCB;
 
 		if( pxMutexHolder != NULL )
 		{
+			configASSERT( pxTCB->uxMutexesHeld );
+			( pxTCB->uxMutexesHeld )--;
+
 			if( pxTCB->uxPriority != pxTCB->uxBasePriority )
 			{
 				/* Only disinherit if no other mutexes are held. */
-				if( pxTCB->uxMutexesHeld == 0 )
+				if( pxTCB->uxMutexesHeld == ( UBaseType_t ) 0 )
 				{
 					/* The holding task must be the running task to be able to give
 					the mutex back.  Remove the holding task from the ready list. */
@@ -3584,9 +3587,9 @@ TickType_t uxReturn;
 }
 /*-----------------------------------------------------------*/
 
-void vTaskIncrementMutexHeldCount( void )
-{
-	#if ( configUSE_MUTEXES == 1 )
+#if ( configUSE_MUTEXES == 1 )
+
+	void *pvTaskIncrementMutexHeldCount( void )
 	{
 		/* If xSemaphoreCreateMutex() is called before any tasks have been created
 		then pxCurrentTCB will be NULL. */
@@ -3594,25 +3597,13 @@ void vTaskIncrementMutexHeldCount( void )
 		{
 			( pxCurrentTCB->uxMutexesHeld )++;
 		}
-	}
-	#endif
-}
-/*-----------------------------------------------------------*/
 
-void vTaskDecrementMutexHeldCount( void )
-{
-	#if ( configUSE_MUTEXES == 1 )
-	{
-		/* If xSemaphoreCreateMutex() is called before any tasks have been created
-		then pxCurrentTCB will be NULL. */
-		if( pxCurrentTCB != NULL )
-		{
-			configASSERT( pxCurrentTCB->uxMutexesHeld );
-			( pxCurrentTCB->uxMutexesHeld )--;
-		}
+		return pxCurrentTCB;
 	}
-	#endif
-}
+
+#endif /* configUSE_MUTEXES */
+
+/*-----------------------------------------------------------*/
 
 #ifdef FREERTOS_MODULE_TEST
 	#include "tasks_test_access_functions.h"
