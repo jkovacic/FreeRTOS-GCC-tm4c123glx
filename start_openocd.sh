@@ -24,6 +24,7 @@
 # 
 #   git clone http://git.code.sf.net/p/openocd/code
 #   cd code
+#   ./bootstrap
 #   ./configure --enable-maintainer-mode --enable-ti-icdi --enable-ftdi --enable-jlink
 #   make
 #   make install
