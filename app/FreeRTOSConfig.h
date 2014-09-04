@@ -1,5 +1,5 @@
 /*
-    FreeRTOS V8.0.1 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.1.2 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -101,7 +101,7 @@
 #define configTICK_RATE_HZ                ( ( TickType_t ) 1000 )
 /* PIOSC frequency is 16 MHz: */
 #define configPIOSC_CLOCK_HZ              ( ( UBaseType_t ) 16000000 )
-#define configMAX_PRIORITIES              ( ( UBaseType_t ) 5 )
+#define configMAX_PRIORITIES              ( 5 )
 #define configMINIMAL_STACK_SIZE          ( ( StackType_t ) 128 )
 #define configTOTAL_HEAP_SIZE             ( ( size_t ) ( 10240 ) )
 #define configMAX_TASK_NAME_LEN           ( 16 )
@@ -110,9 +110,6 @@
 #define configIDLE_SHOULD_YIELD           1
 #define configUSE_APPLICATION_TASK_TAG    1
 #define configCHECK_FOR_STACK_OVERFLOW    0
-
-#define configUSE_PORT_OPTIMISED_TASK_SELECTION    0
-
 
 #define configUSE_MUTEXES                 0
 

@@ -16,7 +16,7 @@
  */
 
 /*
-    FreeRTOS V8.1.1 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.1.2 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -470,7 +470,7 @@ void vPortClearInterruptMask( uint32_t ulNewMaskValue )
     (                                 \
         "   MSR   basepri, r0    \n"  \
         "   BX    lr             \n"  \
-		:::"r0"                       \
+        :::"r0"                       \
 	);
 
 
@@ -487,7 +487,7 @@ void xPortPendSVHandler( void )
     __asm volatile
     (
     "   MRS       r0, psp                   \n"
-    "   ISB	                                \n"
+    "   ISB                                 \n"
     "                                       \n"
     "   LDR       r3, pxCurrentTCBConst     \n" /* Get the location of the current TCB. */
     "   LDR       r2, [r3]                  \n"
@@ -555,7 +555,7 @@ void xPortSysTickHandler( void )
              * is performed in the PendSV interrupt.  Pend the
              * PendSV interrupt.
              */
-        	scb_triggerPendSv();
+            scb_triggerPendSv();
         }
     }
     portCLEAR_INTERRUPT_MASK_FROM_ISR( 0 );
@@ -567,8 +567,8 @@ void xPortSysTickHandler( void )
 
     __attribute__((weak)) void vPortSuppressTicksAndSleep( TickType_t xExpectedIdleTime )
     {
-    uint32_t ulReloadValue, ulCompleteTickPeriods, ulCompletedSysTickDecrements, ulSysTickCTRL;
-    TickType_t xModifiableIdleTime;
+        uint32_t ulReloadValue, ulCompleteTickPeriods, ulCompletedSysTickDecrements, ulSysTickCTRL;
+        TickType_t xModifiableIdleTime;
 
         /* Make sure the SysTick reload value does not overflow the counter. */
         if( xExpectedIdleTime > xMaximumPossibleSuppressedTicks )
@@ -784,8 +784,8 @@ void vPortSetupTimerInterrupt( void )
 
     void vPortValidateInterruptPriority( void )
     {
-    uint32_t ulCurrentInterrupt;
-    uint8_t ucCurrentPriority;
+        uint32_t ulCurrentInterrupt;
+        uint8_t ucCurrentPriority;
 
         /* Obtain the number of the currently executing interrupt. */
         __asm volatile( "MRS   %0, ipsr" : "=r"( ulCurrentInterrupt ) );
