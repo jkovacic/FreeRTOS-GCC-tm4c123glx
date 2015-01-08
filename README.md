@@ -41,7 +41,7 @@ When the image _tiva.bin_ is successfully built, you may upload it to
 the Launchpad, using the simple cross platform CLI tool 
 [LM4Tools](https://github.com/utzig/lm4tools):
 
-`/path/to/lm4flash tiva.bin`
+`/path/to/lm4flash image.bin`
 
 Alternatively you may use the GUI tool 
 [TI LMFlash Programmer](http://www.ti.com/tool/lmflashprogrammer), provided
