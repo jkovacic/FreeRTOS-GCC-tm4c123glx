@@ -12,24 +12,10 @@
  */
 
 /*
-    FreeRTOS V8.1.2 - Copyright (C) 2014 Real Time Engineers Ltd.
+    FreeRTOS V8.2.0rc1 - Copyright (C) 2014 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
-
-    ***************************************************************************
-     *                                                                       *
-     *    FreeRTOS provides completely free yet professionally developed,    *
-     *    robust, strictly quality controlled, supported, and cross          *
-     *    platform software that has become a de facto standard.             *
-     *                                                                       *
-     *    Help yourself get started quickly and support the FreeRTOS         *
-     *    project by purchasing a FreeRTOS tutorial book, reference          *
-     *    manual, or both from: http://www.FreeRTOS.org/Documentation        *
-     *                                                                       *
-     *    Thank you!                                                         *
-     *                                                                       *
-    ***************************************************************************
 
     This file is part of the FreeRTOS distribution.
 
@@ -44,7 +30,7 @@
 
     FreeRTOS is distributed in the hope that it will be useful, but WITHOUT ANY
     WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-    FOR A PARTICULAR PURPOSE.  Full license text is available from the following
+    FOR A PARTICULAR PURPOSE.  Full license text is available on the following
     link: http://www.freertos.org/a00114.html
 
     1 tab == 4 spaces!
@@ -52,9 +38,50 @@
     ***************************************************************************
      *                                                                       *
      *    Having a problem?  Start by reading the FAQ "My application does   *
-     *    not run, what could be wrong?"                                     *
+     *    not run, what could be wrong?".  Have you defined configASSERT()?  *
      *                                                                       *
      *    http://www.FreeRTOS.org/FAQHelp.html                               *
+     *                                                                       *
+    ***************************************************************************
+
+    ***************************************************************************
+     *                                                                       *
+     *    FreeRTOS provides completely free yet professionally developed,    *
+     *    robust, strictly quality controlled, supported, and cross          *
+     *    platform software that is more than just the market leader, it     *
+     *    is the industry's de facto standard.                               *
+     *                                                                       *
+     *    Help yourself get started quickly while simultaneously helping     *
+     *    to support the FreeRTOS project by purchasing a FreeRTOS           *
+     *    tutorial book, reference manual, or both:                          *
+     *    http://www.FreeRTOS.org/Documentation                              *
+     *                                                                       *
+    ***************************************************************************
+
+    ***************************************************************************
+     *                                                                       *
+     *   Investing in training allows your team to be as productive as       *
+     *   possible as early as possible, lowering your overall development    *
+     *   cost, and enabling you to bring a more robust product to market     *
+     *   earlier than would otherwise be possible.  Richard Barry is both    *
+     *   the architect and key author of FreeRTOS, and so also the world's   *
+     *   leading authority on what is the world's most popular real time     *
+     *   kernel for deeply embedded MCU designs.  Obtaining your training    *
+     *   from Richard ensures your team will gain directly from his in-depth *
+     *   product knowledge and years of usage experience.  Contact Real Time *
+     *   Engineers Ltd to enquire about the FreeRTOS Masterclass, presented  *
+     *   by Richard Barry:  http://www.FreeRTOS.org/contact
+     *                                                                       *
+    ***************************************************************************
+
+    ***************************************************************************
+     *                                                                       *
+     *    You are receiving this top quality software for free.  Please play *
+     *    fair and reciprocate by reporting any suspected issues and         *
+     *    participating in the community forum:                              *
+     *    http://www.FreeRTOS.org/support                                    *
+     *                                                                       *
+     *    Thank you!                                                         *
      *                                                                       *
     ***************************************************************************
 
@@ -65,9 +92,12 @@
     including FreeRTOS+Trace - an indispensable productivity tool, a DOS
     compatible FAT file system, and our tiny thread aware UDP/IP stack.
 
+    http://www.FreeRTOS.org/labs - Where new FreeRTOS products go to incubate.
+    Come and try FreeRTOS+TCP, our new open source TCP/IP stack for FreeRTOS.
+
     http://www.OpenRTOS.com - Real Time Engineers ltd license FreeRTOS to High
-    Integrity Systems to sell under the OpenRTOS brand.  Low cost OpenRTOS
-    licenses offer ticketed support, indemnification and middleware.
+    Integrity Systems ltd. to sell under the OpenRTOS brand.  Low cost OpenRTOS
+    licenses offer ticketed support, indemnification and commercial middleware.
 
     http://www.SafeRTOS.com - High Integrity Systems also provide a safety
     engineered and independently SIL3 certified version for use in safety and
@@ -83,6 +113,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*
+ * Forward declaration of driver's function:
+ */
+void scb_triggerPendSv(void);
+
 
 /*-----------------------------------------------------------
  * Port specific definitions.
@@ -124,10 +160,23 @@ typedef uint32_t UBaseType_t;
 
 
 /* Scheduler utilities. */
-extern void vPortYield( void );
-#define portYIELD()                 vPortYield()
+
+#define portYIELD( )                                            \
+{                                                               \
+    /* Set a PendSV to request a context switch. */             \
+	scb_triggerPendSv();                                        \
+                                                                \
+    /*                                                          \
+     * Barriers are normally not required but do ensure the     \
+     * code is completely within the specified behaviour for    \
+     * the architecture.                                        \
+     */                                                         \
+    __asm volatile( "DSB" );                                    \
+    __asm volatile( "ISB" );                                    \
+}
+
 #define portEND_SWITCHING_ISR( xSwitchRequired ) \
-    if( xSwitchRequired ) portNVIC_INT_CTRL_REG = portNVIC_PENDSVSET_BIT
+		if( xSwitchRequired != pdFALSE ) portYIELD()
 #define portYIELD_FROM_ISR( x )     portEND_SWITCHING_ISR( x )
 /*-----------------------------------------------------------*/
 
@@ -135,13 +184,11 @@ extern void vPortYield( void );
 /* Critical section management. */
 extern void vPortEnterCritical( void );
 extern void vPortExitCritical( void );
-extern uint32_t ulPortSetInterruptMask( void );
-extern void vPortClearInterruptMask( uint32_t ulNewMaskValue );
 
-#define portSET_INTERRUPT_MASK_FROM_ISR()       ulPortSetInterruptMask()
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)    vPortClearInterruptMask(x)
-#define portDISABLE_INTERRUPTS()                ulPortSetInterruptMask()
-#define portENABLE_INTERRUPTS()                 vPortClearInterruptMask(0)
+#define portSET_INTERRUPT_MASK_FROM_ISR()       ulPortRaiseBASEPRI()
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR(x)    vPortSetBASEPRI(x)
+#define portDISABLE_INTERRUPTS()                vPortRaiseBASEPRI()
+#define portENABLE_INTERRUPTS()                 vPortSetBASEPRI(0)
 #define portENTER_CRITICAL()                    vPortEnterCritical()
 #define portEXIT_CRITICAL()                     vPortExitCritical()
 /*-----------------------------------------------------------*/
@@ -173,7 +220,7 @@ not necessary for to use this port.  They are defined so the common demo files
     {
     uint8_t ucReturn;
 
-        __asm volatile ( "clz %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) );
+        __asm volatile ( "CLZ %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) );
         return ucReturn;
     }
 
@@ -201,6 +248,59 @@ not necessary for to use this port.  They are defined so the common demo files
 
 /* portNOP() is not required by this port. */
 #define portNOP()
+
+#ifndef portFORCE_INLINE
+    #define portFORCE_INLINE inline __attribute__(( always_inline))
+#endif
+
+/*-----------------------------------------------------------*/
+
+portFORCE_INLINE static void vPortRaiseBASEPRI( void )
+{
+uint32_t ulNewBASEPRI;
+
+    __asm volatile
+    (
+        "    MOV %0, %1            \n" \
+        "    MSR basepri, %0       \n" \
+        "    ISB                   \n" \
+        "    DSB                   \n" \
+        :"=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
+	);
+}
+
+/*-----------------------------------------------------------*/
+
+portFORCE_INLINE static uint32_t ulPortRaiseBASEPRI( void )
+{
+uint32_t ulOriginalBASEPRI, ulNewBASEPRI;
+
+    __asm volatile
+    (
+        "    MRS %0, basepri       \n" \
+        "    MOV %1, %2            \n" \
+        "    MSR basepri, %1       \n" \
+        "    ISB                   \n" \
+        "    DSB                   \n" \
+        :"=r" (ulOriginalBASEPRI), "=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
+	);
+
+    /*
+     * This return will not be reached but is necessary to prevent compiler
+     * warnings.
+     */
+     return ulOriginalBASEPRI;
+}
+/*-----------------------------------------------------------*/
+
+portFORCE_INLINE static void vPortSetBASEPRI( uint32_t ulNewMaskValue )
+{
+    __asm volatile
+    (
+        "    MSR basepri, %0    " :: "r" ( ulNewMaskValue )
+    );
+}
+/*-----------------------------------------------------------*/
 
 #ifdef __cplusplus
 }

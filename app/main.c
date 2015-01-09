@@ -406,7 +406,7 @@ int main(void)
 
     vDirectPrintMsg("Enter a text via UART 1.\r\n");
     vDirectPrintMsg("It will be displayed inverted when 'Enter' is pressed.\r\n\r\n");
-    vDirectPrintMsg("Press switch 1 to pause/resume light show.");
+    vDirectPrintMsg("Press switch 1 to pause/resume light show.\r\n");
 
     /* Start the FreeRTOS scheduler */
     vTaskStartScheduler();

@@ -5,7 +5,7 @@ i.e. an evaluation board with the
 [TI TM4C123GH6PM](http://www.ti.com/lit/ds/symlink/tm4c123gh6pm.pdf)
 microcontroller, based on ARM&#xae; Cortex-M4F.
 
-The current version is based on FreeRTOS 8.1.2. The port will be regularly
+The current version is based on FreeRTOS 8.2.0rc1 The port will be regularly
 updated with newer versions of FreeRTOS when they are released.
 
 The port is still at an early development stage and includes only very basic
@@ -41,7 +41,7 @@ When the image _tiva.bin_ is successfully built, you may upload it to
 the Launchpad, using the simple cross platform CLI tool 
 [LM4Tools](https://github.com/utzig/lm4tools):
 
-`/path/to/lm4flash tiva.bin`
+`/path/to/lm4flash image.bin`
 
 Alternatively you may use the GUI tool 
 [TI LMFlash Programmer](http://www.ti.com/tool/lmflashprogrammer), provided
