@@ -164,7 +164,7 @@ typedef uint32_t UBaseType_t;
 #define portYIELD( )                                            \
 {                                                               \
     /* Set a PendSV to request a context switch. */             \
-	scb_triggerPendSv();                                        \
+    scb_triggerPendSv();                                        \
                                                                 \
     /*                                                          \
      * Barriers are normally not required but do ensure the     \
@@ -176,7 +176,7 @@ typedef uint32_t UBaseType_t;
 }
 
 #define portEND_SWITCHING_ISR( xSwitchRequired ) \
-		if( xSwitchRequired != pdFALSE ) portYIELD()
+        if( xSwitchRequired != pdFALSE ) portYIELD()
 #define portYIELD_FROM_ISR( x )     portEND_SWITCHING_ISR( x )
 /*-----------------------------------------------------------*/
 
@@ -266,7 +266,7 @@ uint32_t ulNewBASEPRI;
         "    ISB                   \n" \
         "    DSB                   \n" \
         :"=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
-	);
+    );
 }
 
 /*-----------------------------------------------------------*/
@@ -283,7 +283,7 @@ uint32_t ulOriginalBASEPRI, ulNewBASEPRI;
         "    ISB                   \n" \
         "    DSB                   \n" \
         :"=r" (ulOriginalBASEPRI), "=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
-	);
+    );
 
     /*
      * This return will not be reached but is necessary to prevent compiler
