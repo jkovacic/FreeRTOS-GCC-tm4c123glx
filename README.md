@@ -32,7 +32,7 @@ the necessary paths, simply type:
 
 `. ./setenv.sh`
 
-To build the image with the test application, just run _make_ or _make rebuild_.
+To build the image with the test application, just run `make` or `make rebuild`.
 If the build process is successful, the image file _image.bin_ will be ready to
 upload to the Launchpad.
 

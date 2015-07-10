@@ -30,6 +30,9 @@ LD = $(TOOLCHAIN)ld
 OBJCOPY = $(TOOLCHAIN)objcopy
 AR = $(TOOLCHAIN)ar
 
+# GCC flags
+CFLAG = -c
+OFLAG = -o
 INCLUDEFLAG = -I
 CPUFLAG = -mthumb -mcpu=cortex-m4
 WFLAG = -Wall -Wextra -Werror
@@ -139,7 +142,7 @@ $(OBJDIR) :
 	mkdir -p $@
 
 $(ELF_IMAGE) : $(OBJS) $(LINKER_SCRIPT)
-	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) -o $@
+	$(LD) -nostdlib -L $(OBJDIR) -T $(LINKER_SCRIPT) $(OBJS) $(OFLAG) $@
 
 debug : _debug_flags all
 
@@ -152,28 +155,28 @@ _debug_flags :
 # FreeRTOS core
 
 $(OBJDIR)queue.o : $(FREERTOS_SRC)queue.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)list.o : $(FREERTOS_SRC)list.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)tasks.o : $(FREERTOS_SRC)tasks.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)timers.o : $(FREERTOS_SRC)timers.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)croutine.o : $(FREERTOS_SRC)croutine.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)event_groups.o : $(FREERTOS_SRC)event_groups.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 
 # HW specific part, in FreeRTOS/Source/portable/$(PORT_COMP_TARGET)
 
 $(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 
 
@@ -182,84 +185,84 @@ $(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c $(DEP_FRTOS_CONFIG)
 # Only one of these object files must be linked to the final target
 
 $(OBJDIR)heap_1.o : $(FREERTOS_MEMMANG_SRC)heap_1.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)heap_2.o : $(FREERTOS_MEMMANG_SRC)heap_2.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)heap_3.o : $(FREERTOS_MEMMANG_SRC)heap_3.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)heap_4.o : $(FREERTOS_MEMMANG_SRC)heap_4.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)heap_5.o : $(FREERTOS_MEMMANG_SRC)heap_5.c $(DEP_FRTOS_CONFIG)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 # Drivers
 
 $(OBJDIR)sysctl.o : $(DRIVERS_SRC)sysctl.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)systick.o : $(DRIVERS_SRC)systick.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)nvic.o : $(DRIVERS_SRC)nvic.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)scb.o : $(DRIVERS_SRC)scb.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)interrupt.o : $(DRIVERS_SRC)interrupt.c
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)gpio.o : $(DRIVERS_SRC)gpio.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)uart.o : $(DRIVERS_SRC)uart.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)watchdog.o : $(DRIVERS_SRC)watchdog.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)led.o : $(DRIVERS_SRC)led.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)switch.o : $(DRIVERS_SRC)switch.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)fpu.o : $(DRIVERS_SRC)fpu.c $(DEP_BSP)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 
 # Demo application
 
 $(OBJDIR)startup.o : $(APP_SRC)startup.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)handlers.o : $(APP_SRC)handlers.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)init.o : $(APP_SRC)init.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)main.o : $(APP_SRC)main.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)wdtask.o : $(APP_SRC)wdtask.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)print.o : $(APP_SRC)print.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)receive.o : $(APP_SRC)receive.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)lightshow.o : $(APP_SRC)lightshow.c $(DEP_SETTINGS)
-	$(CC) -c $(CFLAGS) $(INC_FLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c
-	$(CC) -c $(CFLAGS) $< -o $@
+	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
 
 
 # Cleanup directives:
