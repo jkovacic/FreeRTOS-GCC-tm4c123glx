@@ -16,7 +16,7 @@
  */
 
 /*
-    FreeRTOS V8.2.3 - Copyright (C) 2015 Real Time Engineers Ltd.
+    FreeRTOS V9.0.0rc1 - Copyright (C) 2016 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -269,7 +269,7 @@ void vPortSVCHandler( void )
         "    MSR    basepri, r0                  \n"
         "    BX     r14                          \n"
         "                                        \n"
-        "    .align 2                            \n"
+        "    .align 4                            \n"
         "pxCurrentTCBConst2:  .word pxCurrentTCB \n"
    );
 }
@@ -483,7 +483,7 @@ void xPortPendSVHandler( void )
     "                                       \n"
     "   BX        r14                       \n"
     "                                       \n"
-    "   .align 2                            \n"
+    "   .align 4                            \n"
     "pxCurrentTCBConst: .word pxCurrentTCB	\n"
     ::"i"(configMAX_SYSCALL_INTERRUPT_PRIORITY << PRIMASK_SHIFT )
     );
@@ -500,7 +500,7 @@ void xPortSysTickHandler( void )
      * mask value as its value is already known.
      */
 
-    ( void ) portSET_INTERRUPT_MASK_FROM_ISR();
+    portDISABLE_INTERRUPTS();
     {
         /* Increment the RTOS tick. */
         if( xTaskIncrementTick() != pdFALSE )
@@ -513,7 +513,7 @@ void xPortSysTickHandler( void )
             scb_triggerPendSv();
         }
     }
-    portCLEAR_INTERRUPT_MASK_FROM_ISR( 0 );
+    portENABLE_INTERRUPTS();
 }
 /*-----------------------------------------------------------*/
 
@@ -681,7 +681,7 @@ void xPortSysTickHandler( void )
                  * The reload value is set to whatever fraction of a single
                  * tick period remains.
                  */
-                portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1 ) * ulTimerCountsForOneTick ) - ulCompletedSysTickDecrements;
+                portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1UL ) * ulTimerCountsForOneTick ) - ulCompletedSysTickDecrements;
             }
 
             /*
