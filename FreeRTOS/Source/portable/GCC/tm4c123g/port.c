@@ -16,7 +16,7 @@
  */
 
 /*
-    FreeRTOS V8.2.3 - Copyright (C) 2015 Real Time Engineers Ltd.
+    FreeRTOS V9.0.0 - Copyright (C) 2016 Real Time Engineers Ltd.
     All rights reserved
 
     VISIT http://www.FreeRTOS.org TO ENSURE YOU ARE USING THE LATEST VERSION.
@@ -109,6 +109,12 @@
 #define portINITIAL_XPSR            ( 0x01000000 )
 #define portINITIAL_EXEC_RETURN	    ( 0xfffffffd )
 
+
+/*
+ * For strict compliance with the Cortex-M spec the task start address should
+ * have bit-0 clear, as it is loaded into the PC on exit from an ISR.
+ */
+#define portSTART_ADDRESS_MASK      ( ( StackType_t ) 0xfffffffeUL )
 
 /*
  * A fiddle factor to estimate the number of SysTick counts that would have
@@ -218,7 +224,7 @@ StackType_t* pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
     *pxTopOfStack = portINITIAL_XPSR;             /* xPSR */
     pxTopOfStack--;
-    *pxTopOfStack = ( StackType_t ) pxCode;       /* PC */
+    *pxTopOfStack = ( ( StackType_t ) pxCode ) & portSTART_ADDRESS_MASK;       /* PC */
     pxTopOfStack--;
     *pxTopOfStack = ( StackType_t ) portTASK_RETURN_ADDRESS;  /* LR */
 
@@ -269,7 +275,7 @@ void vPortSVCHandler( void )
         "    MSR    basepri, r0                  \n"
         "    BX     r14                          \n"
         "                                        \n"
-        "    .align 2                            \n"
+        "    .align 4                            \n"
         "pxCurrentTCBConst2:  .word pxCurrentTCB \n"
    );
 }
@@ -483,7 +489,7 @@ void xPortPendSVHandler( void )
     "                                       \n"
     "   BX        r14                       \n"
     "                                       \n"
-    "   .align 2                            \n"
+    "   .align    4                         \n"
     "pxCurrentTCBConst: .word pxCurrentTCB	\n"
     ::"i"(configMAX_SYSCALL_INTERRUPT_PRIORITY << PRIMASK_SHIFT )
     );
@@ -500,7 +506,7 @@ void xPortSysTickHandler( void )
      * mask value as its value is already known.
      */
 
-    ( void ) portSET_INTERRUPT_MASK_FROM_ISR();
+	portDISABLE_INTERRUPTS();
     {
         /* Increment the RTOS tick. */
         if( xTaskIncrementTick() != pdFALSE )
@@ -513,7 +519,7 @@ void xPortSysTickHandler( void )
             scb_triggerPendSv();
         }
     }
-    portCLEAR_INTERRUPT_MASK_FROM_ISR( 0 );
+    portENABLE_INTERRUPTS();
 }
 /*-----------------------------------------------------------*/
 
@@ -555,6 +561,8 @@ void xPortSysTickHandler( void )
          * method as that will mask interrupts that should exit sleep mode.
          */
         __asm volatile( "CPSID i" );
+        __asm volatile( "DSB" );
+        __asm volatile( "ISB" );
 
         /*
          * If a context switch is pending or a task is waiting for the scheduler
@@ -681,7 +689,7 @@ void xPortSysTickHandler( void )
                  * The reload value is set to whatever fraction of a single
                  * tick period remains.
                  */
-                portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1 ) * ulTimerCountsForOneTick ) - ulCompletedSysTickDecrements;
+                portNVIC_SYSTICK_LOAD_REG = ( ( ulCompleteTickPeriods + 1UL ) * ulTimerCountsForOneTick ) - ulCompletedSysTickDecrements;
             }
 
             /*
