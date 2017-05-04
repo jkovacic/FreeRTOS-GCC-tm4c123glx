@@ -1,4 +1,4 @@
-##About
+## About
 [FreeRTOS](http://www.freertos.org/), ported to the
 [Texas Instruments TM4C123GLX Launchpad](http://www.ti.com/tool/ek-tm4c123gxl), 
 i.e. an evaluation board with the 
@@ -12,7 +12,7 @@ The port is still at an early development stage and includes only very basic
 demo tasks. More complex tasks will be included in the future.
 
 
-##Prerequisites
+## Prerequisites
 * _Tiva&#x2122; C series TM4C123GLX Launchpad_
 * A _Micro-B USB cable_, usually shipped with a Launchpad
 * _Sourcery CodeBench Lite Edition for ARM EABI_ toolchain (now owned by Mentor Graphics),
@@ -25,7 +25,7 @@ to upload images to the Launchpad
 See comments in _start\_openocd.sh_ for more details about installation.
 * Optionally a _FTDI or PL2303HX cable supporting +3.3V based TTL level UART signals_
 
-##Build
+## Build
 A convenience Bash script _setenv.sh_ is provided to set paths to toolchain's commands
 and libraries. You may edit it and adjust the paths according to your setup. To set up
 the necessary paths, simply type:
@@ -36,7 +36,7 @@ To build the image with the test application, just run `make` or `make rebuild`.
 If the build process is successful, the image file _image.bin_ will be ready to
 upload to the Launchpad.
 
-##Run
+## Run
 When the image _tiva.bin_ is successfully built, you may upload it to
 the Launchpad, using the simple cross platform CLI tool 
 [LM4Tools](https://github.com/utzig/lm4tools):
@@ -61,7 +61,7 @@ set `APP_PRINT_UART_NR` and `APP_RECV_UART_NR` both to 0 and rebuild the applica
 In this case, it is not necessary to establish the second connection
 as the entire communication will be performed by the first one.
 
-##Application
+## Application
 The first serial connection is a debug connection, intended to
 display diagnostic messages only. It will display a welcome message and
 start printing the system's uptime.
@@ -74,7 +74,7 @@ In parallel to this, a simple light show runs. It periodically turns on and off
 various combinations of built-in LEDs. The light show may be paused/resumed by
 pressing the built-in switch 1.
 
-##License
+## License
 All source and header files in FreeRTOS/ and its subdirectiories are licensed under
 the [modified GPL license](http://www.freertos.org/license.txt).
 All other files that are not derived from the FreeRTOS source distribution are licensed
