@@ -5,7 +5,7 @@ i.e. an evaluation board with the
 [TI TM4C123GH6PM](http://www.ti.com/lit/ds/symlink/tm4c123gh6pm.pdf)
 microcontroller, based on ARM&#xae; Cortex-M4F.
 
-The current version is based on FreeRTOS 9.0.0. The port will be regularly
+The current version is based on FreeRTOS 10.0.0. The port will be regularly
 updated with newer versions of FreeRTOS when they are released.
 
 The port is still at an early development stage and includes only very basic
@@ -76,7 +76,7 @@ pressing the built-in switch 1.
 
 ## License
 All source and header files in FreeRTOS/ and its subdirectiories are licensed under
-the [modified GPL license](http://www.freertos.org/license.txt).
+the [MIT license](https://www.freertos.org/a00114.html).
 All other files that are not derived from the FreeRTOS source distribution are licensed
 under the [Apache 2.0 license](http://www.apache.org/licenses/LICENSE-2.0).
 
