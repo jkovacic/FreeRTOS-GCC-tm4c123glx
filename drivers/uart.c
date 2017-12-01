@@ -157,7 +157,7 @@ typedef struct _TM4C123G_UART_REGS
 /* ============================================================ */
 #define GEN_CAST_ADDR(ADDR)     (volatile TM4C123G_UART_REGS* const) (ADDR),
 
-static volatile TM4C123G_UART_REGS* const pReg[ BSP_NR_UARTS ]=
+static volatile TM4C123G_UART_REGS* const pReg[ BSP_NR_UARTS ] =
 {
     BSP_UART_BASE_ADDRESSES( GEN_CAST_ADDR )
 };

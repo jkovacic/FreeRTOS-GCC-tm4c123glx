@@ -26,7 +26,7 @@
  * Definitions of base addresses and IRQs of Texas Instruments TM4C123GH6PMI.
  *
  * The header should be included into each source file that implements peripherals' drivers
- * or handle their interrupt requests.
+ * or handles their interrupt requests.
  *
  * For more details, see :
  * Tiva(TM) TM4C123GH6PM Microcontroller Data Sheet:
