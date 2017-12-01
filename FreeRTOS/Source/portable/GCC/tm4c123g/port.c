@@ -554,7 +554,7 @@ void xPortSysTickHandler( void )
          * Enter a critical section but don't use the taskENTER_CRITICAL()
          * method as that will mask interrupts that should exit sleep mode.
          */
-        __asm volatile( "CPSID i" );
+        __asm volatile( "CPSID i" ::: "memory");
         __asm volatile( "DSB" );
         __asm volatile( "ISB" );
 
@@ -583,7 +583,7 @@ void xPortSysTickHandler( void )
              * Re-enable interrupts - see comments above the cpsid
              * instruction() above.
              */
-            __asm volatile( "CPSIE i" );
+            __asm volatile( "CPSIE i" ::: "memory" );
         }
         else
         {
@@ -610,7 +610,7 @@ void xPortSysTickHandler( void )
             configPRE_SLEEP_PROCESSING( xModifiableIdleTime );
             if( xModifiableIdleTime > 0 )
             {
-                __asm volatile( "DSB" );
+                __asm volatile( "DSB" ::: "memory" );
                 __asm volatile( "WFI" );
                 __asm volatile( "ISB" );
             }
@@ -716,7 +716,7 @@ void xPortSysTickHandler( void )
             vTaskStepTick( ulCompleteTickPeriods );
             portNVIC_SYSTICK_LOAD_REG = ulTimerCountsForOneTick - 1UL;
 
-            /* Exit with interrpts enabled. */
+            /* Exit with interrupts enabled. */
             __asm volatile( "CPSIE i" ::: "memory" );
         }
     }

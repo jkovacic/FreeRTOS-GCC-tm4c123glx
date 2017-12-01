@@ -153,7 +153,7 @@ not necessary for to use this port.  They are defined so the common demo files
     {
     uint8_t ucReturn;
 
-        __asm volatile ( "CLZ %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) );
+        __asm volatile ( "CLZ %0, %1" : "=r" ( ucReturn ) : "r" ( ulBitmap ) : "memory" );
         return ucReturn;
     }
 
@@ -194,7 +194,7 @@ uint32_t ulCurrentInterrupt;
 BaseType_t xReturn;
 
     /* Obtain the number of the currently executing interrupt. */
-    __asm volatile( "MRS %0, ipsr" : "=r"( ulCurrentInterrupt ) );
+    __asm volatile( "MRS %0, ipsr" : "=r"( ulCurrentInterrupt ) :: "memory" );
 
     if( ulCurrentInterrupt == 0 )
     {
@@ -220,7 +220,7 @@ uint32_t ulNewBASEPRI;
         "    MSR basepri, %0       \n" \
         "    ISB                   \n" \
         "    DSB                   \n" \
-        :"=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
+        :"=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "memory"
     );
 }
 
@@ -237,7 +237,7 @@ uint32_t ulOriginalBASEPRI, ulNewBASEPRI;
         "    MSR basepri, %1       \n" \
         "    ISB                   \n" \
         "    DSB                   \n" \
-        :"=r" (ulOriginalBASEPRI), "=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY )
+        :"=r" (ulOriginalBASEPRI), "=r" (ulNewBASEPRI) : "i" ( configMAX_SYSCALL_INTERRUPT_PRIORITY ) : "memory"
     );
 
     /*
@@ -252,7 +252,7 @@ portFORCE_INLINE static void vPortSetBASEPRI( uint32_t ulNewMaskValue )
 {
     __asm volatile
     (
-        "    MSR basepri, %0    " :: "r" ( ulNewMaskValue )
+        "    MSR basepri, %0    " :: "r" ( ulNewMaskValue ) : "memory"
     );
 }
 /*-----------------------------------------------------------*/
