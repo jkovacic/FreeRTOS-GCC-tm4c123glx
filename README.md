@@ -15,7 +15,7 @@ demo tasks. More complex tasks will be included in the future.
 ## Prerequisites
 * _Tiva&#x2122; C series TM4C123GLX Launchpad_
 * A _Micro-B USB cable_, usually shipped with a Launchpad
-* _Sourcery CodeBench Lite Edition for ARM EABI_ toolchain (now owned by Mentor Graphics),
+* _[GNU Arm Embedded Toolchain](https://developer.arm.com/open-source/gnu-toolchain/gnu-rm/downloads)_,
 based on GCC. See comments in _setenv.sh_ for more details about download and installation.
 * _GNU Make_
 * _[LM4Tools](https://github.com/utzig/lm4tools)_ or 

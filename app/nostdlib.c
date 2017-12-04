@@ -68,7 +68,7 @@ void* memset(void* ptr, int value, size_t num )
     size_t n = num;
 
     /* sanity check */
-    if ( NULL==ptr )
+    if ( NULL==p )
     {
         goto endf;
     }
@@ -124,7 +124,7 @@ void* memcpy(void* destination, const void* source, size_t num )
     size_t n = num;
 
     /* sanity check */
-    if ( NULL==source || NULL==destination )
+    if ( NULL==srcptr || NULL==destptr )
     {
         return NULL;
     }
@@ -200,7 +200,7 @@ char* strcpy(char* destination, const char* source)
     char* destptr = destination;
 
     /* sanity check */
-    if ( NULL==destination || NULL==source )
+    if ( NULL==destptr || NULL==srcptr )
     {
         return NULL;
     }
@@ -236,10 +236,10 @@ char* strcpy(char* destination, const char* source)
  */
 size_t strlen(const char* str)
 {
-    const char* pc;
+    const char* pc = str;
 
     /* sanity check: */
-    if ( NULL == str )
+    if ( NULL == pc )
     {
         return (size_t) -1;
     }
@@ -272,11 +272,11 @@ size_t strlen(const char* str)
  */
 char* strcat(char* destination, const char* source)
 {
-    char* pd;
-    const char* ps;
+    char* pd = destination;
+    const char* ps = source;
 
     /* sanity check */
-    if ( NULL == destination || NULL==source )
+    if ( NULL == pd || NULL==ps )
     {
         return destination;
     }
@@ -331,7 +331,7 @@ int32_t strcmp(const char* str1, const char* str2)
     const char* s2 = str2;
 
     /* sanity check: */
-    if ( NULL==str1 || NULL==str2 )
+    if ( NULL==s1 || NULL==s2 )
     {
         return 0;
     }
